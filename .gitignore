@@ -1,0 +1,9 @@
+$ cat .gitignore
+# exclude everything except directory foo/bar
+
+/dist/*
+/node_modules/*
+
+# Untracked files:
+/src/resources/*
+/src/index.html
