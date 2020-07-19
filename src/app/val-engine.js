@@ -227,9 +227,19 @@ grid.prototype.tileData = function(){
           let posY = item.tile.split(',')[1];
 
           if(item.data.zPos === 0){
-            let x = (520 + (posX - 1) * 60) - (60 * (posY)) - 64;
-            let y = (120 + (posX - 1) * 30) + (30 * (posY)) - 80;
+            // let x = (520 + (posX - 1) * 60) - (60 * (posY)) - 60;
+            // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (item.data.tile.height - 38);
+
+            // let x = (520 + (posX - 1) * 60) - (60 * (posY)) - 62;
+            // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (item.data.tile.height - 38);
+
+            let x = (520 + (posX - 1) * 60) - (60 * (posY)) - 60.75;
+            let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (item.data.tile.height - 38.75);
+
             // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (80 + (80 * item.data.zPos));
+
+            // console.log(item.data.tile.height)
+
             ctx.drawImage(item.data.tile, x, y)
           }
 
@@ -272,13 +282,13 @@ grid.prototype.tileData = function(){
           var posY = parseInt(item.tile.split(',')[0]);
 
           zPath.moveTo((400 + ((posY - 0) * 60)) - (60 * posX), (100 + ((posY - 0) * 30)) + (30 * posX));
-          zPath.lineTo((400 + ((posY - 0) * 60)) - (60 * posX), (100 + ((posY- 0) * 30)) + (30 * posX) - (60 * item.data.zPos))
+          zPath.lineTo((400 + ((posY - 0) * 60)) - (60 * posX), (100 + ((posY- 0) * 30)) + (30 * posX) - (this.zHeight * item.data.zPos))
 
           zPath.moveTo((460 + ((posY - 0) * 60)) - (60 * posX), (130 + ((posY - 0) * 30)) + (30 * posX));
-          zPath.lineTo((460 + ((posY - 0) * 60)) - (60 * posX), (130 + ((posY - 0) * 30)) + (30 * posX) - (60 * item.data.zPos))
+          zPath.lineTo((460 + ((posY - 0) * 60)) - (60 * posX), (130 + ((posY - 0) * 30)) + (30 * posX) - (this.zHeight * item.data.zPos))
 
           zPath.moveTo((520 + ((posY - 0) * 60)) - (60 * posX), (100 + ((posY - 0) * 30)) + (30 * posX));
-          zPath.lineTo((520 + ((posY - 0) * 60)) - (60 * posX), (100 + ((posY - 0) * 30)) + (30 * posX) - (60 * item.data.zPos))
+          zPath.lineTo((520 + ((posY - 0) * 60)) - (60 * posX), (100 + ((posY - 0) * 30)) + (30 * posX) - (this.zHeight * item.data.zPos))
 
           this.context.lineWidth = 3
           this.context.strokeStyle = "#229954";
@@ -290,13 +300,13 @@ grid.prototype.tileData = function(){
             let obj = {};
 
             obj['startPointX'] = (array[0][0] + (y * 60)) - (60 * x);
-            obj['startPointY'] = ((array[0][1] + (y * 30)) + (30 * x) - (60 * (z - 1)));
+            obj['startPointY'] = ((array[0][1] + (y * 30)) + (30 * x) - (this.zHeight * (z - 1)));
             obj['pointAX'] = (array[1][0] + (y * 60)) - (60 * x);
-            obj['pointAY'] = ((array[1][1] + (y * 30)) + (30 * x) - (60 * (z - 1)));
+            obj['pointAY'] = ((array[1][1] + (y * 30)) + (30 * x) - (this.zHeight * (z - 1)));
             obj['pointBX'] = (array[2][0] + (y * 60)) - (60 * x);
-            obj['pointBY'] = ((array[2][1] + (y * 30)) + (30 * x) - (60 * (z - 1)));
+            obj['pointBY'] = ((array[2][1] + (y * 30)) + (30 * x) - (this.zHeight * (z - 1)));
             obj['pointCX'] = (array[3][0] + (y * 60)) - (60 * x);
-            obj['pointCY'] = ((array[3][1] + (y * 30)) + (30 * x) - (60 * (z - 1)));
+            obj['pointCY'] = ((array[3][1] + (y * 30)) + (30 * x) - (this.zHeight * (z - 1)));
 
             return obj;
 
@@ -315,11 +325,11 @@ grid.prototype.tileData = function(){
 
           var pointObj = calculateCords(cordArray, posY, posX, item.data.zPos);
 
-          zPlaneOne.moveTo(pointObj.startPointX, (pointObj.startPointY - 60));
-          zPlaneOne.lineTo(pointObj.pointAX, (pointObj.pointAY - 60));
-          zPlaneOne.lineTo(pointObj.pointBX, (pointObj.pointBY - 60));
-          zPlaneOne.lineTo(pointObj.pointCX, (pointObj.pointCY - 60));
-          zPlaneOne.lineTo(pointObj.pointDX, (pointObj.pointDY - 60));
+          zPlaneOne.moveTo(pointObj.startPointX, (pointObj.startPointY - this.zHeight));
+          zPlaneOne.lineTo(pointObj.pointAX, (pointObj.pointAY - this.zHeight));
+          zPlaneOne.lineTo(pointObj.pointBX, (pointObj.pointBY - this.zHeight));
+          zPlaneOne.lineTo(pointObj.pointCX, (pointObj.pointCY - this.zHeight));
+          zPlaneOne.lineTo(pointObj.pointDX, (pointObj.pointDY - this.zHeight));
 
           this.context.fillStyle = 'rgba(220, 160, 100, 1)'
           this.context.fill(zPlaneOne);
@@ -331,18 +341,18 @@ grid.prototype.tileData = function(){
           let cordArray2 = [
             [400, 100],
             [460, 130],
-            [460, (190 + (60 * (item.data.zPos - 1)))],
-            [400, (160 + (60 * (item.data.zPos - 1)))],
+            [460, ((130 + this.zHeight) + (this.zHeight * (item.data.zPos - 1)))],
+            [400, ((100 + this.zHeight) + (this.zHeight * (item.data.zPos - 1)))],
             [400, 100]
           ];
 
           var pointObj2 = calculateCords(cordArray2, posY, posX, item.data.zPos);
 
-          zPlaneTwo.moveTo(pointObj2.startPointX, (pointObj2.startPointY - 60));
-          zPlaneTwo.lineTo(pointObj2.pointAX, (pointObj2.pointAY - 60));
-          zPlaneTwo.lineTo(pointObj2.pointBX, (pointObj2.pointBY - 60));
-          zPlaneTwo.lineTo(pointObj2.pointCX, (pointObj2.pointCY - 60));
-          zPlaneTwo.lineTo(pointObj2.pointDX, (pointObj2.pointDY - 60));
+          zPlaneTwo.moveTo(pointObj2.startPointX, (pointObj2.startPointY - this.zHeight));
+          zPlaneTwo.lineTo(pointObj2.pointAX, (pointObj2.pointAY - this.zHeight));
+          zPlaneTwo.lineTo(pointObj2.pointBX, (pointObj2.pointBY - this.zHeight));
+          zPlaneTwo.lineTo(pointObj2.pointCX, (pointObj2.pointCY - this.zHeight));
+          zPlaneTwo.lineTo(pointObj2.pointDX, (pointObj2.pointDY - this.zHeight));
 
           this.context.fillStyle = 'rgba(160, 220, 100, 1)'
           this.context.fill(zPlaneTwo);
@@ -354,19 +364,19 @@ grid.prototype.tileData = function(){
 
           let cordArray3 = [
             [520, 100],
-            [520, (160 + (60 * (item.data.zPos - 1)))],
-            [460, (190 + (60 * (item.data.zPos - 1)))],
+            [520, ((100 + this.zHeight) + (this.zHeight * (item.data.zPos - 1)))],
+            [460, ((130 + this.zHeight) + (this.zHeight * (item.data.zPos - 1)))],
             [460, 130],
             [520, 100]
           ];
 
           var pointObj3 = calculateCords(cordArray3, posY, posX, item.data.zPos);
 
-          zPlaneThree.moveTo(pointObj3.startPointX, (pointObj3.startPointY - 60));
-          zPlaneThree.lineTo(pointObj3.pointAX, (pointObj3.pointAY - 60));
-          zPlaneThree.lineTo(pointObj3.pointBX, (pointObj3.pointBY - 60));
-          zPlaneThree.lineTo(pointObj3.pointCX, (pointObj3.pointCY - 60));
-          zPlaneThree.lineTo(pointObj3.pointDX, (pointObj3.pointDY - 60));
+          zPlaneThree.moveTo(pointObj3.startPointX, (pointObj3.startPointY - this.zHeight));
+          zPlaneThree.lineTo(pointObj3.pointAX, (pointObj3.pointAY - this.zHeight));
+          zPlaneThree.lineTo(pointObj3.pointBX, (pointObj3.pointBY - this.zHeight));
+          zPlaneThree.lineTo(pointObj3.pointCX, (pointObj3.pointCY - this.zHeight));
+          zPlaneThree.lineTo(pointObj3.pointDX, (pointObj3.pointDY - this.zHeight));
 
           this.context.fillStyle = 'rgba(160, 100, 220, 1)'
           this.context.fill(zPlaneThree);
@@ -375,14 +385,18 @@ grid.prototype.tileData = function(){
 
           console.log(item.data.tile)
           if(item.data.tile){
-            console.log(posX)
-            console.log(posY)
-            let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 64;
-            // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - 80;
-            let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (80 + (60 * item.data.zPos));
+            // console.log(posX)
+            // console.log(posY)
 
-            console.log(x);
-            console.log(y)
+
+            // let x = (520 + (posX - 1) * 60) - (60 * (posY)) - 60.75;
+            // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (item.data.tile.height - 38.75);
+
+            // let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 64;
+            // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - ((item.data.tile.height - 35) + (60 * item.data.zPos));
+
+            let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 60.75;
+            let y = (120 + (posX - 1) * 30) + (30 * (posY)) - ((item.data.tile.height - 38.75) + (this.zHeight * item.data.zPos));
 
             this.context.drawImage(item.data.tile, x, y)
           }
@@ -961,36 +975,26 @@ grid.prototype.ui = function(){
                 let hoverTile = new Path2D();
 
                 context.globalAlpha = 1;
+                context.fillStyle = 'rgba(255, 0, 0, 0.2)'
                 context.strokeStyle = 'red'
 
-                // let startPointX = (400 + ((i - 0) * 60)) - (tileOffsetX * x);
-                // let startPointY = (50 + ((i - 0) * 30)) + (tileOffsetY * x);
-                // let pointAX = (460 + ((i - 0) * 60)) - (tileOffsetX * x);
-                // let pointAY = (80 + ((i - 0) * 30)) + (tileOffsetY * x);
-                // let pointBX = (520 + ((i - 0) * 60)) - (tileOffsetX * x);
-                // let pointBY = (50 + ((i - 0) * 30)) + (tileOffsetY * x);
-                // let pointCX = (460 + ((i - 0) * 60)) - (tileOffsetX * x);
-                // let pointCY = (20 + ((i - 0) * 30)) + (tileOffsetY * x);
-                // let pointDX = (400 + ((i - 0) * 60)) - (tileOffsetX * x);
-                // let pointDY = (50 + ((i - 0) * 30)) + (tileOffsetY * x);
-
                 let startPointX = (400 + ((i - 0) * 60)) - (tileOffsetX * x);
-                let startPointY = (100 + ((i - 0) * 30)) + (tileOffsetY * x);
+                let startPointY = (100 + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos ));
                 let pointAX = (460 + ((i - 0) * 60)) - (tileOffsetX * x);
-                let pointAY = (130 + ((i - 0) * 30)) + (tileOffsetY * x);
+                let pointAY = (130 + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
                 let pointBX = (520 + ((i - 0) * 60)) - (tileOffsetX * x);
-                let pointBY = (100 + ((i - 0) * 30)) + (tileOffsetY * x);
+                let pointBY = (100 + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
                 let pointCX = (460 + ((i - 0) * 60)) - (tileOffsetX * x);
-                let pointCY = (70 + ((i - 0) * 30)) + (tileOffsetY * x);
+                let pointCY = (70 + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
                 let pointDX = (400 + ((i - 0) * 60)) - (tileOffsetX * x);
-                let pointDY = (100 + ((i - 0) * 30)) + (tileOffsetY * x);
+                let pointDY = (100 + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
 
                 hoverTile.moveTo(startPointX, startPointY);
                 hoverTile.lineTo(pointAX, pointAY);
                 hoverTile.lineTo(pointBX, pointBY);
                 hoverTile.lineTo(pointCX, pointCY);
                 hoverTile.lineTo(pointDX, pointDY);
-                context.fill();
+                context.fill(hoverTile);
                 context.stroke(hoverTile);
 
                 this.hovered = item
@@ -1063,8 +1067,12 @@ grid.prototype.editTile = function(tile, pos, e){
   let ctx = this.context;
   var posX = parseInt(pos.tile.split(',')[1]);
   var posY = parseInt(pos.tile.split(',')[0]);
-  let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 64;
-  let y = (120 + (posY - 1) * 30) + (30 * (posX)) - 80;
+  // let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 64;
+  // let y = (120 + (posY - 1) * 30) + (30 * (posX)) - 80;
+
+  // console.log(y);
+  // console.log(x);
+  // console.log(pos)
 
   if(!tile){
     this.tileMap[posX][posY].data['tile'] = null;
@@ -1088,14 +1096,12 @@ grid.prototype.tileLevel = function(type, pos){
   // let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 64;
   // let y = (50 + (posY - 1) * 30) + (30 * (posX)) - 30;
 
-  let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 64;
-  let y = (120 + (posY - 1) * 30) + (30 * (posX)) - 30;
+  // let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 64;
+  // let y = (120 + (posY - 1) * 30) + (30 * (posX)) - 30;
 
   // let thisTileZ = this.tileMap[posX][posY].data['zPos']
 
   var zLevel;
-
-
 
   if(type === 'increase'){
       console.log(pos.data.zPos)
@@ -1128,6 +1134,35 @@ grid.prototype.clearAll = function(){
         let posY = item.tile.split(',')[1];
 
         this.tileMap[posY][posX].data['tile'] = null
+
+      }
+
+    })
+
+  }
+
+  this.draw();
+
+}
+
+grid.prototype.levelZero = function(){
+  let ctx = this.context;
+
+  var tile;
+
+  for(let x = 0;x < this.tileMap.length;x++){
+
+    this.tileMap[x].forEach((item, i) => {
+
+      if(item.data.zPos > 0){
+
+        let ctx = this.context;
+
+        let posX = item.tile.split(',')[0];
+        let posY = item.tile.split(',')[1];
+
+        this.tileMap[posY][posX].data['zPos'] = 0;
+        tile = this.tileMap[posY][posX]
 
       }
 
