@@ -23,11 +23,35 @@ const grid = function(obj){
   this.tileMap = [];
   this.zIndex = 0
 
+  this.tileOffsetX = this.tileSize / 2;
+  this.tileOffsetY = (this.tileSize / 2) / 2;
+
   this.startCordsX = 35;
   this.startCordsY = 68;
+
+  this.topCorner = {
+    x: null,
+    y: null
+  };
+  this.rightCorner = {
+    x: null,
+    y: null
+  };
+  this.bottomCorner = {
+    x: null,
+    y: null
+  };
+  this.leftCorner = {
+    x: null,
+    y: null
+  };
+
+
+
 }
 
 grid.prototype.buildCanvas = function(){
+
   const root = document.querySelector(this.root);
 
   if(!document.querySelector('#game-field')){
@@ -61,8 +85,8 @@ grid.prototype.buildCanvas = function(){
     var mapWidth = this.tileSize * this.tilesX;
     var mapHeight = (this.tileSize / 2) * this.tilesY;
 
-    console.log(mapWidth);
-    console.log(mapHeight)
+    // console.log(mapWidth);
+    // console.log(mapHeight);
 
     // plane.moveTo(35, 280);
     // plane.lineTo(460, 68);
@@ -70,11 +94,56 @@ grid.prototype.buildCanvas = function(){
     // plane.lineTo(460, 490);
     // plane.lineTo(35, 280);
 
-    plane.moveTo(startCordsX, ((mapHeight / 2) + startCordsY));
-    plane.lineTo(((mapWidth / 2) + startCordsX), startCordsY);
-    plane.lineTo((mapWidth + startCordsX), ((mapHeight / 2) + startCordsY));
-    plane.lineTo(((mapWidth / 2) + startCordsX), (mapHeight + startCordsY));
-    plane.lineTo(startCordsX, ((mapHeight / 2) + startCordsY));
+
+    let top = this.tileMap[0][0];
+    let right = this.tileMap[0][this.tileMap[this.tileMap.length - 1].length - 1];
+    let bottom = this.tileMap[this.tileMap.length - 1][this.tileMap[this.tileMap.length - 1].length - 1];
+    let left = this.tileMap[this.tileMap.length - 1][0];
+
+    let offsetY = this.startCordsY;
+    let offsetX = ((this.mapWidth / 2) + this.startCordsX);
+
+      console.log(top)
+      console.log(right)
+      console.log(bottom)
+      console.log(left)
+      // console.log(((mapHeight / 2) + startCordsY))
+
+
+
+    // plane.moveTo(startCordsX, ((mapHeight / 2) + startCordsY));
+    // plane.lineTo(((mapWidth / 2) + startCordsX), startCordsY);
+    // plane.lineTo((mapWidth + startCordsX), ((mapHeight / 2) + startCordsY));
+    // plane.lineTo(((mapWidth / 2) + startCordsX), (mapHeight + startCordsY));
+    // plane.lineTo(startCordsX, ((mapHeight / 2) + startCordsY));
+
+    // console.log('---------------')
+    // console.log((left.b - left.t))
+    // console.log(((left.t + offsetY) + ((left.b - left.t) / 2)))
+    // console.log(bottom)
+
+    // plane.moveTo(left.cl[1] + offsetX, left.cl[0] + offsetY);
+    // plane.lineTo(top.ct[1] + offsetX, top.ct[0] + offsetY);
+    // plane.lineTo(right.cr[1] + offsetX, right.cr[0] + offsetY);
+    // plane.lineTo(bottom.cb[1] + offsetX, bottom.cb[0] + offsetY);
+    // plane.lineTo(left.cl[1] + offsetX, left.cl[0] + offsetY);
+
+
+    this.leftCorner['x'] = left.cl[1] + offsetX;
+    this.leftCorner['y'] = ((left.t + offsetY) + ((left.b - left.t) / 2));
+    this.topCorner['x'] = top.ct[1] + offsetX;
+    this.topCorner['y'] = top.ct[0] + offsetY;
+    this.rightCorner['x'] = right.cr[1] + offsetX;
+    this.rightCorner['y'] = right.cr[0] + offsetY;
+    this.bottomCorner['x'] = ((bottom.cl[1] + offsetX) + ((bottom.r - bottom.l) / 2));
+    this.bottomCorner['y'] =  bottom.cb[0] + offsetY;
+
+
+    plane.moveTo(left.cl[1] + offsetX, ((left.t + offsetY) + ((left.b - left.t) / 2)));
+    plane.lineTo(top.ct[1] + offsetX, top.ct[0] + offsetY);
+    plane.lineTo(right.cr[1] + offsetX, right.cr[0] + offsetY);
+    plane.lineTo(((bottom.cl[1] + offsetX) + ((bottom.r - bottom.l) / 2)), bottom.cb[0] + offsetY);
+    plane.lineTo(left.cl[1] + offsetX, ((left.t + offsetY) + ((left.b - left.t) / 2)));
 
 
     // context.fillStyle = 'rgba(0, 0, 0, 0.2)'
@@ -245,8 +314,8 @@ grid.prototype.tileData = function(){
     var mapWidth = this.tileSize * this.tilesX;
     var mapHeight = (this.tileSize / 2) * this.tilesY;;
 
-    console.log(mapWidth);
-    console.log(mapHeight)
+    var tileOffsetX = this.tileOffsetX;
+    var tileOffsetY = this.tileOffsetY;
 
     // plane.moveTo(35, 280);
     // plane.lineTo(460, 68);
@@ -254,11 +323,17 @@ grid.prototype.tileData = function(){
     // plane.lineTo(460, 490);
     // plane.lineTo(35, 280);
 
-    plane.moveTo(startCordsX, ((mapHeight / 2) + startCordsY));
-    plane.lineTo(((mapWidth / 2) + startCordsX), startCordsY);
-    plane.lineTo((mapWidth + startCordsX), ((mapHeight / 2) + startCordsY));
-    plane.lineTo(((mapWidth / 2) + startCordsX), (mapHeight + startCordsY));
-    plane.lineTo(startCordsX, ((mapHeight / 2) + startCordsY));
+    plane.moveTo(this.leftCorner['x'], this.leftCorner['y']);
+    plane.lineTo(this.topCorner['x'], this.topCorner['y']);
+    plane.lineTo(this.rightCorner['x'], this.rightCorner['y']);
+    plane.lineTo(this.bottomCorner['x'], this.bottomCorner['y']);
+    plane.lineTo(this.leftCorner['x'], this.leftCorner['y']);
+
+    // plane.moveTo(startCordsX, ((mapHeight / 2) + startCordsY));
+    // plane.lineTo(((mapWidth / 2) + startCordsX), startCordsY);
+    // plane.lineTo((mapWidth + startCordsX), ((mapHeight / 2) + startCordsY));
+    // plane.lineTo(((mapWidth / 2) + startCordsX), (mapHeight + startCordsY));
+    // plane.lineTo(startCordsX, ((mapHeight / 2) + startCordsY));
 
     this.context.fillStyle = 'rgba(255, 0, 255, 0.2)'
     this.context.fill(plane);
@@ -286,10 +361,19 @@ grid.prototype.tileData = function(){
             // let x = (520 + (posX - 1) * 60) - (60 * (posY)) - 60.75;
             // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (item.data.tile.height - 38.75);
 
-            let x = ((((mapWidth / 2) + startCordsX) + (tw / 2)) + (posX - 1) * 60) - (60 * (posY)) - 60.75;
-            let y = ((startCordsY + th) + (posX - 1) * 30) + (30 * (posY)) - (item.data.tile.height - 38.75);
+            // let x = ((((mapWidth / 2) + startCordsX) + (tw / 2)) + (posX - 1) * tileOffsetX) - (tileOffsetX * (posY - 1));
+            // let y = ((startCordsY + th) + (posX - 1) * tileOffsetY) + (tileOffsetY * (posY - 1)) - (item.data.tile.height);
 
-            // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (80 + (80 * item.data.zPos));
+            // console.log(item.data.tile.height / (this.tileSize / 2))
+
+            var offsetImg = 0;
+
+            if(item.data.tile.height > (this.tileSize / 2)){
+              offsetImg = (item.data.tile.height / (this.tileSize / 2) - 1) * (this.tileSize / 2);
+            }
+
+            let x = (((((mapWidth / 2) + startCordsX)) + (posX - 1) * tileOffsetX) - (tileOffsetX * (posY - 1)) - (this.tileSize / 2));
+            let y = ((startCordsY + th) + (posX - 1) * tileOffsetY) + (tileOffsetY * (posY - 1)) - (offsetImg);
 
             // console.log(item.data.tile.height)
 
@@ -303,17 +387,17 @@ grid.prototype.tileData = function(){
 
           if(item.data.zPos > this.zIndex){
 
-            const canvas = document.createElement('canvas');
-            canvas.setAttribute('id', `game-field-${item.data.zPos}`);
-            root.appendChild(canvas);
+            // const canvas = document.createElement('canvas');
+            // canvas.setAttribute('id', `game-field-${item.data.zPos}`);
+            // root.appendChild(canvas);
 
-            var thisCanvas = document.querySelector(`#game-field-${item.data.zPos}`)
-            thisCanvas.setAttribute('width', this.width);
-            thisCanvas.setAttribute('height', this.height);
+            // var thisCanvas = document.querySelector(`#game-field-${item.data.zPos}`)
+            // thisCanvas.setAttribute('width', this.width);
+            // thisCanvas.setAttribute('height', this.height);
 
             let context;
 
-            context = thisCanvas.getContext('2d');
+            context = this.context
 
             let plane = new Path2D();
 
@@ -329,11 +413,11 @@ grid.prototype.tileData = function(){
             // var mapWidth = (this.tileSize * this.tilesX);
             // var mapHeight = (mapWidth / 2);
 
-            plane.moveTo(startCordsX, (((mapHeight / 2) + startCordsY)) - (30 * item.data.zPos));
-            plane.lineTo(((mapWidth / 2) + startCordsX), (startCordsY - (30 * item.data.zPos)));
-            plane.lineTo((mapWidth + startCordsX), (((mapHeight / 2) + startCordsY)) - (30 * item.data.zPos));
-            plane.lineTo(((mapWidth / 2) + startCordsX), ((mapHeight + startCordsY)) - (30 * item.data.zPos));
-            plane.lineTo(startCordsX, (((mapHeight / 2) + startCordsY)) - (30 * item.data.zPos));
+            plane.moveTo(startCordsX, (((mapHeight / 2) + startCordsY)) - (tileOffsetY * item.data.zPos));
+            plane.lineTo(((mapWidth / 2) + startCordsX), (startCordsY - (tileOffsetY * item.data.zPos)));
+            plane.lineTo((mapWidth + startCordsX), (((mapHeight / 2) + startCordsY)) - (tileOffsetY * item.data.zPos));
+            plane.lineTo(((mapWidth / 2) + startCordsX), ((mapHeight + startCordsY)) - (tileOffsetY * item.data.zPos));
+            plane.lineTo(startCordsX, (((mapHeight / 2) + startCordsY)) - (tileOffsetY * item.data.zPos));
 
 
             context.fillStyle = 'rgba(0, 0, 0, 0)'
@@ -349,21 +433,22 @@ grid.prototype.tileData = function(){
 
 
 
-          let path1X = (((mapWidth / 2) - (startCordsX / 2)) - 10);
+          // let path1X = (((mapWidth / 2) - (startCordsX / 2)) - 10);
+          let path1X = ((mapWidth / 2) + startCordsX) - (tw / 2);
           let path1Y = (startCordsY + (th / 2));
           let path2X = ((mapWidth / 2) + startCordsX);
           let path2Y = (startCordsY + th);
           let path3X = (((mapWidth / 2) + startCordsX) + (tw / 2));
           let path3Y = (startCordsY + (th / 2));
 
-          zPath.moveTo((path1X + ((posY - 0) * 60)) - (60 * posX), (path1Y + ((posY - 0) * 30)) + (30 * posX));
-          zPath.lineTo((path1X + ((posY - 0) * 60)) - (60 * posX), (path1Y + ((posY- 0) * 30)) + (30 * posX) - (this.zHeight * item.data.zPos))
+          zPath.moveTo((path1X + ((posY - 0) * tileOffsetX)) - (tileOffsetX * posX), (path1Y + ((posY - 0) * tileOffsetY)) + (tileOffsetY * posX));
+          zPath.lineTo((path1X + ((posY - 0) * tileOffsetX)) - (tileOffsetX * posX), (path1Y + ((posY- 0) * tileOffsetY)) + (tileOffsetY * posX) - (this.zHeight * item.data.zPos))
 
-          zPath.moveTo((path2X + ((posY - 0) * 60)) - (60 * posX), (path2Y + ((posY - 0) * 30)) + (30 * posX));
-          zPath.lineTo((path2X + ((posY - 0) * 60)) - (60 * posX), (path2Y + ((posY - 0) * 30)) + (30 * posX) - (this.zHeight * item.data.zPos))
+          zPath.moveTo((path2X + ((posY - 0) * tileOffsetX)) - (tileOffsetX * posX), (path2Y + ((posY - 0) * tileOffsetY)) + (tileOffsetY * posX));
+          zPath.lineTo((path2X + ((posY - 0) * tileOffsetX)) - (tileOffsetX * posX), (path2Y + ((posY - 0) * tileOffsetY)) + (tileOffsetY * posX) - (this.zHeight * item.data.zPos))
 
-          zPath.moveTo((path3X + ((posY - 0) * 60)) - (60 * posX), (path3Y + ((posY - 0) * 30)) + (30 * posX));
-          zPath.lineTo((path3X + ((posY - 0) * 60)) - (60 * posX), (path3Y + ((posY - 0) * 30)) + (30 * posX) - (this.zHeight * item.data.zPos))
+          zPath.moveTo((path3X + ((posY - 0) * tileOffsetX)) - (tileOffsetX * posX), (path3Y + ((posY - 0) * tileOffsetY)) + (tileOffsetY * posX));
+          zPath.lineTo((path3X + ((posY - 0) * tileOffsetX)) - (tileOffsetX * posX), (path3Y + ((posY - 0) * tileOffsetY)) + (tileOffsetY * posX) - (this.zHeight * item.data.zPos))
 
           this.context.lineWidth = 3
           this.context.strokeStyle = "#229954";
@@ -374,14 +459,14 @@ grid.prototype.tileData = function(){
 
             let obj = {};
 
-            obj['startPointX'] = (array[0][0] + (y * 60)) - (60 * x);
-            obj['startPointY'] = ((array[0][1] + (y * 30)) + (30 * x) - (this.zHeight * (z - 1)));
-            obj['pointAX'] = (array[1][0] + (y * 60)) - (60 * x);
-            obj['pointAY'] = ((array[1][1] + (y * 30)) + (30 * x) - (this.zHeight * (z - 1)));
-            obj['pointBX'] = (array[2][0] + (y * 60)) - (60 * x);
-            obj['pointBY'] = ((array[2][1] + (y * 30)) + (30 * x) - (this.zHeight * (z - 1)));
-            obj['pointCX'] = (array[3][0] + (y * 60)) - (60 * x);
-            obj['pointCY'] = ((array[3][1] + (y * 30)) + (30 * x) - (this.zHeight * (z - 1)));
+            obj['startPointX'] = (array[0][0] + (y * tileOffsetX)) - (tileOffsetX * x);
+            obj['startPointY'] = ((array[0][1] + (y * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (z - 1)));
+            obj['pointAX'] = (array[1][0] + (y * tileOffsetX)) - (tileOffsetX * x);
+            obj['pointAY'] = ((array[1][1] + (y * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (z - 1)));
+            obj['pointBX'] = (array[2][0] + (y * tileOffsetX)) - (tileOffsetX * x);
+            obj['pointBY'] = ((array[2][1] + (y * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (z - 1)));
+            obj['pointCX'] = (array[3][0] + (y * tileOffsetX)) - (tileOffsetX * x);
+            obj['pointCY'] = ((array[3][1] + (y * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (z - 1)));
 
             return obj;
 
@@ -399,11 +484,11 @@ grid.prototype.tileData = function(){
           // ];
 
           let cordArray = [
-            [(((mapWidth / 2) - (startCordsX / 2)) - 10), (startCordsY + (th / 2))],
+            [(((mapWidth / 2) + startCordsX) - (tw / 2)), (startCordsY + (th / 2))],
             [((mapWidth / 2) + startCordsX), (startCordsY + th)],
             [(((mapWidth / 2) + startCordsX) + (tw / 2)), (startCordsY + (th / 2))],
             [((mapWidth / 2) + startCordsX), (startCordsY)],
-            [(((mapWidth / 2) - (startCordsX / 2)) - 10), (startCordsY + (th / 2))]
+            [(((mapWidth / 2) + startCordsX) - (tw / 2)), (startCordsY + (th / 2))]
           ];
 
           var pointObj = calculateCords(cordArray, posY, posX, item.data.zPos);
@@ -431,11 +516,11 @@ grid.prototype.tileData = function(){
 
 
           let cordArray2 = [
-            [(((mapWidth / 2) - (startCordsX / 2)) - 10), (startCordsY + (th / 2))],
+            [(((mapWidth / 2) + startCordsX) - (tw / 2)), (startCordsY + (th / 2))],
             [((mapWidth / 2) + startCordsX), (startCordsY + th)],
             [((mapWidth / 2) + startCordsX), (((startCordsY + th) + this.zHeight) + (this.zHeight * (item.data.zPos - 1)))],
-            [(((mapWidth / 2) - (startCordsX / 2)) - 10), (((startCordsY + (th / 2)) + this.zHeight) + (this.zHeight * (item.data.zPos - 1)))],
-            [(((mapWidth / 2) - (startCordsX / 2)) - 10), (startCordsY + (th / 2))]
+            [(((mapWidth / 2) + startCordsX) - (tw / 2)), (((startCordsY + (th / 2)) + this.zHeight) + (this.zHeight * (item.data.zPos - 1)))],
+            [(((mapWidth / 2) + startCordsX) - (tw / 2)), (startCordsY + (th / 2))]
           ];
 
           var pointObj2 = calculateCords(cordArray2, posY, posX, item.data.zPos);
@@ -485,11 +570,10 @@ grid.prototype.tileData = function(){
 
 
 
-          console.log(item.data.tile)
+          // console.log(item.data.tile)
           if(item.data.tile){
             // console.log(posX)
             // console.log(posY)
-
 
             // let x = (520 + (posX - 1) * 60) - (60 * (posY)) - 60.75;
             // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - (item.data.tile.height - 38.75);
@@ -500,8 +584,21 @@ grid.prototype.tileData = function(){
             // let x = (520 + (posY - 1) * 60) - (60 * (posX)) - 60.75;
             // let y = (120 + (posX - 1) * 30) + (30 * (posY)) - ((item.data.tile.height - 38.75) + (this.zHeight * item.data.zPos));
 
-            let x = ((((mapWidth / 2) + startCordsX) + (tw / 2)) + (posY - 1) * 60) - (60 * (posX)) - 60.75;
-            let y = ((startCordsY + th) + (posX - 1) * 30) + (30 * (posY)) - ((item.data.tile.height - 38.75) + (this.zHeight * item.data.zPos));
+            // let x = ((((mapWidth / 2) + startCordsX) + (tw / 2)) + (posY - 1) * startCordsX) - (startCordsX * (posX)) - 60.75;
+            // let y = ((startCordsY + th) + (posX - 1) * startCordsY) + (startCordsY * (posY)) - ((item.data.tile.height - 38.75) + (this.zHeight * item.data.zPos));
+
+            // let x = ((((mapWidth / 2) + startCordsX) + (tw / 2)) + (posY - 1) * startCordsX) - (startCordsX * (posX));
+            // let y = ((startCordsY + th) + (posX - 1) * startCordsY) + (startCordsY * (posY)) - ((item.data.tile.height) + (this.zHeight * item.data.zPos));
+
+
+            var offsetImg = 0;
+
+            if(item.data.tile.height > (this.tileSize / 2)){
+              offsetImg = (item.data.tile.height / (this.tileSize / 2) - 1) * (this.tileSize / 2);
+            }
+
+            let x = ((mapWidth / 2) + (posY - 1) * (this.tileSize / 2)) - ((this.tileSize / 2) * (posX - 1)) - ((this.tileSize / 2) / 2) + 5;
+            let y = ((startCordsY + th) + (posX - 1) * tileOffsetY) + (tileOffsetY * (posY - 1)) - ((this.zHeight * item.data.zPos)) - offsetImg;
 
             this.context.drawImage(item.data.tile, x, y)
           }
@@ -522,6 +619,8 @@ grid.prototype.ui = function(){
 
   const tiles = this.tiles;
   const selected = this.selected;
+  var tileOffsetX = this.tileOffsetX;
+  var tileOffsetY = this.tileOffsetY;
 
   if(!document.querySelector('#game-ui')){
 
@@ -545,8 +644,6 @@ grid.prototype.ui = function(){
     var area2;
     var x, y;
     var gridEdge;
-    var tileOffsetX = 60;
-    var tileOffsetY = 30
     var currentTileMouseOver;
     // let tileChunkSize = 7;
     var arr = tiles;
@@ -557,26 +654,26 @@ grid.prototype.ui = function(){
     var title = document.querySelector('#title');
 
     while(arr.length) {
-        tilesArray.push(arr.splice(0,this.tilesX));
+        tilesArray.push(arr.splice(0,this.tilesY));
     }
 
     this.tileMap = tilesArray
 
 
-    console.log(this.tileMap)
+    // console.log(this.tileMap)
 
     var calculateCords = (array, i, x, offsetY = 0, offsetX = 0,) => {
 
       let obj = {};
 
-      obj['startPointX'] = (array[0][0] + ((i - offsetY)) * 60) - (tileOffsetX * (x + offsetX));
-      obj['startPointY'] = (array[0][1] + ((i - offsetY)) * 30) + (tileOffsetY * (x + offsetX));
-      obj['pointAX'] = (array[1][0] + ((i - offsetY)) * 60) - (tileOffsetX * (x + offsetX));
-      obj['pointAY'] = (array[1][1] + ((i - offsetY)) * 30) + (tileOffsetY * (x + offsetX));
-      obj['pointBX'] = (array[2][0] + ((i - offsetY)) * 60) - (tileOffsetX * (x + offsetX));
-      obj['pointBY'] = (array[2][1] + ((i - offsetY)) * 30) + (tileOffsetY * (x + offsetX));
-      obj['pointCX'] = (array[3][0] + ((i - offsetY)) * 60) - (tileOffsetX * (x + offsetX));
-      obj['pointCY'] = (array[3][1] + ((i - offsetY)) * 30) + (tileOffsetY * (x + offsetX));
+      obj['startPointX'] = (array[0][0] + ((i - offsetY)) * tileOffsetX) - (tileOffsetX * (x + offsetX));
+      obj['startPointY'] = (array[0][1] + ((i - offsetY)) * tileOffsetY) + (tileOffsetY * (x + offsetX));
+      obj['pointAX'] = (array[1][0] + ((i - offsetY)) * tileOffsetX) - (tileOffsetX * (x + offsetX));
+      obj['pointAY'] = (array[1][1] + ((i - offsetY)) * tileOffsetY) + (tileOffsetY * (x + offsetX));
+      obj['pointBX'] = (array[2][0] + ((i - offsetY)) * tileOffsetX) - (tileOffsetX * (x + offsetX));
+      obj['pointBY'] = (array[2][1] + ((i - offsetY)) * tileOffsetY) + (tileOffsetY * (x + offsetX));
+      obj['pointCX'] = (array[3][0] + ((i - offsetY)) * tileOffsetX) - (tileOffsetX * (x + offsetX));
+      obj['pointCY'] = (array[3][1] + ((i - offsetY)) * tileOffsetY) + (tileOffsetY * (x + offsetX));
 
       return obj;
 
@@ -788,7 +885,7 @@ grid.prototype.ui = function(){
               }
 
 
-              if(i === (tilesArray.length - 1)){
+              if(i === (tilesArray[x].length - 1)){
 
                 if((!inside1 && !inside2) && overlap.length === 1){
 
@@ -837,6 +934,12 @@ grid.prototype.ui = function(){
                     [(((mapWidth / 2) + startCordsX) + (tw / 2)), (startCordsY + (th / 2))]
                   ]
 
+
+                  // console.log(this.bottomCorner['x'])
+                  // console.log(this.bottomCorner['x'])
+                  //
+
+
                   var pointObj2 = calculateCords(cordArray2, i, x, 0, +0);
 
                   outerArea2.globalAlpha = 1;
@@ -872,13 +975,12 @@ grid.prototype.ui = function(){
               }
 
 
-
-
-
-
-              if(x === tilesArray[x].length - 1){
+              if(x === tilesArray.length - 1){
+              // if(x === (tilesArray.length - 1)){
 
                 if((!inside1 && !inside2) && overlap.length === 1){
+
+                  let xDistDiff = (this.topCorner['x'] - this.bottomCorner['x']) / 2
 
                   let outerArea = new Path2D();
 
@@ -895,8 +997,6 @@ grid.prototype.ui = function(){
                     [(((mapWidth / 2) + startCordsX) + (tw / 2)), (startCordsY + (th / 2))],
                     [(((mapWidth / 2) + startCordsX) + (tw)), (startCordsY + (th / 2))]
                   ]
-
-                  // console.log(cordArray)
 
                   var pointObj = calculateCords(cordArray, i, x, 1, +1);
 
@@ -923,8 +1023,6 @@ grid.prototype.ui = function(){
                     [(((mapWidth / 2) + startCordsX) + (tw / 2)), (startCordsY + th)]
                   ];
 
-
-
                   var pointObj2 = calculateCords(cordArray2, i, x, 1, +1);
 
                   outerArea2.globalAlpha = 1;
@@ -935,7 +1033,7 @@ grid.prototype.ui = function(){
 
 
                   context.globalAlpha = 1;
-                  context.strokeStyle = 'pink'
+                  context.strokeStyle = 'green'
 
                   context.stroke(outerArea);
                   context.stroke(outerArea2);
@@ -972,7 +1070,7 @@ grid.prototype.ui = function(){
                   //   [460, 100]
                   // ];
 
-                  console.log((mapWidth / 2))
+                  // console.log((mapWidth / 2))
 
                   let cordArray = [
                     [((mapWidth / 2) + startCordsX), (startCordsY + (th / 2))],
@@ -1005,14 +1103,18 @@ grid.prototype.ui = function(){
                   //   [400, 100]
                   // ];
 
-                  // console.log('@@@@@@@@@@@@@@@@@@')
-                  // console.log((mapWidth / 2) - (startCordsX / 2))
+                  // let cordArray2 = [
+                  //   [(((mapWidth / 2) - (startCordsX / 2)) - 10), (startCordsY + (th / 2))],
+                  //   [((mapWidth / 2) + startCordsX), (startCordsY + (th / 2))],
+                  //   [((mapWidth / 2) + startCordsX), (startCordsY + th)],
+                  //   [(((mapWidth / 2) - (startCordsX / 2)) - 10), (startCordsY + (th / 2))]
+                  // ]
 
                   let cordArray2 = [
-                    [(((mapWidth / 2) - (startCordsX / 2)) - 10), (startCordsY + (th / 2))],
                     [((mapWidth / 2) + startCordsX), (startCordsY + (th / 2))],
                     [((mapWidth / 2) + startCordsX), (startCordsY + th)],
-                    [(((mapWidth / 2) - (startCordsX / 2)) - 10), (startCordsY + (th / 2))]
+                    [(((mapWidth / 2) + startCordsX) - (tw / 2)), (startCordsY + (th / 2))],
+                    [((mapWidth / 2) + startCordsX), (startCordsY + (th / 2))]
                   ]
 
                   // console.log('==== cordArray B ====')
@@ -1167,22 +1269,22 @@ grid.prototype.ui = function(){
                 // let pointDY = (leftY + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
 
 
-                let startPointX = (leftX + ((i - 0) * 60)) - (tileOffsetX * x);
-                let startPointY = (leftY + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos ));
-                let pointAX = (bottomX + ((i - 0) * 60)) - (tileOffsetX * x);
-                let pointAY = (bottomY + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
-                let pointBX = (topX + ((i - 0) * 60)) - (tileOffsetX * x);
-                let pointBY = (topY + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
-                let pointCX = (rightX + ((i - 0) * 60)) - (tileOffsetX * x);
-                let pointCY = (rightY + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
-                let pointDX = (leftX + ((i - 0) * 60)) - (tileOffsetX * x);
-                let pointDY = (leftY + ((i - 0) * 30)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
+                let startPointX = (leftX + ((i - 0) * tileOffsetX)) - (tileOffsetX * x);
+                let startPointY = (leftY + ((i - 0) * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos ));
+                let pointAX = (bottomX + ((i - 0) * tileOffsetX)) - (tileOffsetX * x);
+                let pointAY = (bottomY + ((i - 0) * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
+                let pointBX = (topX + ((i - 0) * tileOffsetX)) - (tileOffsetX * x);
+                let pointBY = (topY + ((i - 0) * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
+                let pointCX = (rightX + ((i - 0) * tileOffsetX)) - (tileOffsetX * x);
+                let pointCY = (rightY + ((i - 0) * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
+                let pointDX = (leftX + ((i - 0) * tileOffsetX)) - (tileOffsetX * x);
+                let pointDY = (leftY + ((i - 0) * tileOffsetY)) + (tileOffsetY * x) - (this.zHeight * (item.data.zPos));
 
-                console.log('===================')
-                console.log(startPointX)
-                console.log(startPointY)
-                console.log(`X: ${i}`)
-                console.log(`Y: ${x}`)
+                // console.log('===================')
+                // console.log(startPointX)
+                // console.log(startPointY)
+                // console.log(`X: ${i}`)
+                // console.log(`Y: ${x}`)
                 // console.log(pointAX)
                 // console.log(pointAY)
                 // console.log(pointBX)
@@ -1191,7 +1293,7 @@ grid.prototype.ui = function(){
                 // console.log(pointCY)
                 // console.log(pointDX)
                 // console.log(pointDY)
-                console.log('===================')
+                // console.log('===================')
 
                 hoverTile.moveTo(startPointX, startPointY);
                 hoverTile.lineTo(pointAX, pointAY);
@@ -1279,6 +1381,7 @@ grid.prototype.getMousePos = function(canvas, evt) {
 
     // console.log((evt.clientX - this.startCordsX))
     // console.log((evt.clientY - rect.top))
+    // console.log((evt.clientY - rect.top) - this.startCordsY)
 
     return {
         // x: (evt.clientX - rect.left) - 460,
@@ -1332,9 +1435,9 @@ grid.prototype.tileLevel = function(type, pos){
   var zLevel;
 
   if(type === 'increase'){
-      console.log(pos.data.zPos)
+    // console.log(pos.data.zPos)
     zLevel = pos.data.zPos+1;
-    console.log(zLevel)
+    // console.log(zLevel)
   }else{
     if(pos.data.zPos > 0){
       zLevel = pos.data.zPos-1;
@@ -1413,9 +1516,9 @@ grid.prototype.onClickRight = function(func){
 
 
 grid.prototype.draw = function(){
-  this.buildCanvas();
-  // this.drawGrid();
   this.tileData();
+  window.requestAnimationFrame(this.buildCanvas.bind(this));
+  // this.drawGrid();
   this.ui();
 }
 
