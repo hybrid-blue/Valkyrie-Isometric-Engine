@@ -3,8 +3,6 @@
 
 const grid = function(obj){
   this.root = obj.root
-  this.width = obj.size['width'];
-  this.height = obj.size['height'];
   this.tileset = obj.tileset;
   this.zHeight = obj.zHeight;
   this.tileSize = obj.tileSize;
@@ -22,6 +20,9 @@ const grid = function(obj){
   this.tiles = [];
   this.tileMap = [];
   this.zIndex = 0
+
+
+
 
   this.tileOffsetX = this.tileSize / 2;
   this.tileOffsetY = (this.tileSize / 2) / 2;
@@ -61,9 +62,9 @@ grid.prototype.buildCanvas = function(){
     root.appendChild(canvas);
 
     var thisCanvas = document.querySelector('#game-field')
-    thisCanvas.setAttribute('width', this.width);
-    thisCanvas.setAttribute('height', this.height);
-    // this.canvas = thisCanvas;
+    thisCanvas.setAttribute('width', this.mapWidth + this.startCordsX);
+    thisCanvas.setAttribute('height', this.mapHeight + this.startCordsY);
+    this.canvas = thisCanvas;
 
     let context;
 
@@ -103,10 +104,10 @@ grid.prototype.buildCanvas = function(){
     let offsetY = this.startCordsY;
     let offsetX = ((this.mapWidth / 2) + this.startCordsX);
 
-      console.log(top)
-      console.log(right)
-      console.log(bottom)
-      console.log(left)
+      // console.log(top)
+      // console.log(right)
+      // console.log(bottom)
+      // console.log(left)
       // console.log(((mapHeight / 2) + startCordsY))
 
 
@@ -176,8 +177,8 @@ grid.prototype.drawGrid = function(){
     root.appendChild(canvas);
 
     var thisCanvas = document.querySelector('#game-grid')
-    thisCanvas.setAttribute('width', this.width);
-    thisCanvas.setAttribute('height', this.height);
+    thisCanvas.setAttribute('width', this.mapWidth + this.startCordsX);
+    thisCanvas.setAttribute('height', this.mapHeight + this.startCordsY);
 
     let context;
 
@@ -290,7 +291,9 @@ grid.prototype.tileData = function(){
 
     // Redraw map using existing data
 
-    this.context.clearRect(0, 0, this.width, this.height);
+    var rect = this.canvas.getBoundingClientRect();
+
+    this.context.clearRect(this.startCordsX - 1, this.startCordsY - 1, this.mapWidth + 1, this.mapHeight + 1);
 
     let plane = new Path2D();
 
@@ -630,8 +633,8 @@ grid.prototype.ui = function(){
     root.appendChild(canvas);
 
     var thisCanvas = document.querySelector('#game-ui')
-    thisCanvas.setAttribute('width', this.width);
-    thisCanvas.setAttribute('height', this.height);
+    thisCanvas.setAttribute('width', this.mapWidth + this.startCordsX);
+    thisCanvas.setAttribute('height', this.mapHeight + this.startCordsY);
     var context;
 
     context = thisCanvas.getContext('2d');
@@ -682,7 +685,8 @@ grid.prototype.ui = function(){
 
     thisCanvas.addEventListener("mousemove", (evt) => {
 
-        context.clearRect(0, 0, this.height, this.width)
+        var rect = this.canvas.getBoundingClientRect();
+        context.clearRect(this.startCordsX - 1, this.startCordsY - 1, this.mapWidth + 1, this.mapHeight + 1);
 
         var mousePos = this.getMousePos(thisCanvas, evt);
         var tileOffsetCount = 0;
@@ -1160,7 +1164,8 @@ grid.prototype.ui = function(){
                     }
 
                   }else{
-                    context.clearRect(0, 0, 900, 900);
+                    var rect = this.canvas.getBoundingClientRect();
+                    context.clearRect(this.startCordsX - 1, this.startCordsY - 1, this.mapWidth + 1, this.mapHeight + 1);
                     title.innerHTML = overlap[1].tile;
                     currentTileMouseOver = overlap[1].name;
                   }
@@ -1205,9 +1210,9 @@ grid.prototype.ui = function(){
               if(currentTileMouseOver && item.name === currentTileMouseOver){
                 // Display hover marker selector
 
+                var rect = this.canvas.getBoundingClientRect();
 
-
-                context.clearRect(0, 0, this.height, this.width);
+                context.clearRect(this.startCordsX - 1, this.startCordsY - 1, this.mapWidth + 1, this.mapHeight + 1);
 
                 let hoverTile = new Path2D();
 
@@ -1309,7 +1314,9 @@ grid.prototype.ui = function(){
 
               }else if(tileZero){
 
-                context.clearRect(0, 0, this.height, this.weight);
+                var rect = this.canvas.getBoundingClientRect();
+
+                context.clearRect(this.startCordsX - 1, this.startCordsY - 1, this.mapWidth + 1, this.mapHeight + 1)
 
                 let hoverTile = new Path2D();
 
