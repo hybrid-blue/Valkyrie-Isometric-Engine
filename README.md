@@ -19,4 +19,6 @@ const iso = new grid({
   tilesY: 7
 })
 
+iso.draw();
+
 ```
