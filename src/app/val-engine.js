@@ -1540,6 +1540,46 @@ Valkyrie.prototype.saveMap = function(){
 
   download(`${this.name}.json`, JSON.stringify(mapObj));
 }
+
+Valkyrie.prototype.loadMap = function(data){
+
+  function singleArray(data){
+    var singleArray = [];
+
+    var arrayLength = data.length;
+
+    for(let i=0;i<arrayLength;i++){
+      data[i].forEach(item => {
+        singleArray.push(item)
+      })
+    }
+
+    return singleArray;
+
+  }
+
+  this.tileMap = data;
+  this.tiles = singleArray(data);
+
+}
+
+Valkyrie.prototype.updateMap = function(settings, data){
+
+  console.log(settings);
+  console.log(data);
+
+  this.name = settings.mapName;
+  this.tileset = settings.tileset;
+  this.zHeight = settings.zHeight;
+  this.tileSize = settings.tileSize;
+  this.tilesX = settings.tilesX;
+  this.tilesY = settings.tilesY;
+
+  this.loadMap(data);
+  this.draw();
+
+}
+
   this.clickLeft = func;
 }
 
