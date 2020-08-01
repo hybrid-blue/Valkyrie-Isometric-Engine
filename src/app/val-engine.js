@@ -1513,6 +1513,33 @@ grid.prototype.levelZero = function(){
 }
 
 grid.prototype.onClickLeft = function(func){
+Valkyrie.prototype.saveMap = function(){
+
+  function download(filename, text){
+    var elm = document.createElement('a');
+    elm.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+    elm.setAttribute('download', filename);
+    elm.style.display = 'none';
+    document.querySelector('#root').appendChild(elm);
+    elm.click();
+    document.querySelector('#root').removeChild(elm);
+  }
+
+  let mapObj = {};
+
+  mapObj['data'] = this.tileMap
+  mapObj['settings'] = {
+    root: this.root,
+    name: this.name,
+    tileset: this.tileset,
+    zHeight: this.zHeight,
+    tileSize: this.tileSize,
+    tilesX: this.tilesX,
+    tilesY: this.tilesY
+  }
+
+  download(`${this.name}.json`, JSON.stringify(mapObj));
+}
   this.clickLeft = func;
 }
 
