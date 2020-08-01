@@ -32,7 +32,7 @@ const Valkyrie = function(obj){
   this.tileOffsetX = this.tileSize / 2;
   this.tileOffsetY = (this.tileSize / 2) / 2;
 
-  this.startCordsX = 60;
+  this.startCordsX = 120;
   this.startCordsY = 68;
 
   this.topCorner = {
@@ -670,7 +670,10 @@ Valkyrie.prototype.tileData = function(){
               offsetImg = (item.data.tile.height / (this.tileSize / 2) - 1) * (this.tileSize / 2);
             }
 
-            let x = (((mapWidth / 2) + (posY - 1) * (this.tileSize / 2)) - ((this.tileSize / 2) * (posX - 1)) - ((this.tileSize / 2) / 2) + ((startCordsX / 2) + ((startCordsX / 2) / 2)));
+            let posX = item.tile.split(',')[0];
+            let posY = item.tile.split(',')[1];
+
+            let x = (((((mapWidth / 2) + startCordsX)) + (posX - 1) * tileOffsetX) - (tileOffsetX * (posY - 1)) - (this.tileSize / 2))
             let y = ((startCordsY + th) + (posX - 1) * tileOffsetY) + (tileOffsetY * (posY - 1)) - ((this.zHeight * item.data.zPos)) - offsetImg;
 
             let img = new Image();
