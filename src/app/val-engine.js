@@ -1513,6 +1513,67 @@ grid.prototype.levelZero = function(){
 }
 
 grid.prototype.onClickLeft = function(func){
+Valkyrie.prototype.setTileAttr = function(name, val){
+
+  let posX = this.tileHeld.tile.split(',')[0];
+  let posY = this.tileHeld.tile.split(',')[1];
+
+  var obj = this.tileMap[posY][posX].data['attr'];
+
+  obj[name] = val;
+
+  this.tileMap[posY][posX].data['attr'] = obj;
+
+  console.log(this.tileMap[posY][posX])
+
+}
+
+Valkyrie.prototype.setAttr = function(name){
+  this.attribute.push(name);
+
+  for(let x = 0;x < this.tileMap.length;x++){
+
+    this.tileMap[x].forEach((item, i) => {
+
+      let ctx = this.context;
+      let posX = item.tile.split(',')[0];
+      let posY = item.tile.split(',')[1];
+      this.tileMap[posY][posX].data.attr[name] = false;
+
+    })
+
+  }
+
+}
+
+Valkyrie.prototype.getAttr = function(name){
+  return this.attribute
+}
+
+Valkyrie.prototype.removeAttr = function(name){
+  this.attribute = this.attribute.filter(attr => attr !== name);
+
+  for(let x = 0;x < this.tileMap.length;x++){
+
+    this.tileMap[x].forEach((item, i) => {
+
+      let ctx = this.context;
+      let posX = item.tile.split(',')[0];
+      let posY = item.tile.split(',')[1];
+
+
+      console.log(this.tileMap[posY][posX].data.attr)
+
+      if(this.tileMap[posY][posX].data.attr) delete this.tileMap[posY][posX].data.attr[name];
+
+    })
+
+  }
+
+  console.log(this.attribute)
+
+}
+
 Valkyrie.prototype.saveMap = function(){
 
   function download(filename, text){
