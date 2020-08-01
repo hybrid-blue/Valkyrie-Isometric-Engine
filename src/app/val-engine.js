@@ -1,16 +1,22 @@
 // Custom basic game engine
 // import Icon from '../resources/pyramid.png';
 
-const grid = function(obj){
-  this.root = obj.root
+const Valkyrie = function(obj){
+  console.log(obj)
+  this.root = obj.root;
+  this.name = obj.mapName;
   this.tileset = obj.tileset;
   this.zHeight = obj.zHeight;
   this.tileSize = obj.tileSize;
   this.tilesX = obj.tilesX;
   this.tilesY = obj.tilesY;
 
+  this.showPostion = false
+
+  this.attribute = [];
+
   this.mapWidth = this.tileSize * this.tilesX;
-  this.mapHeight = (this.tileSize / 2) * this.tilesY;;
+  this.mapHeight = (this.tileSize / 2) * this.tilesY;
 
   this.canvas;
   this.context;
@@ -21,13 +27,12 @@ const grid = function(obj){
   this.tileMap = [];
   this.zIndex = 0
 
-
-
+  this.tileHeld = {};
 
   this.tileOffsetX = this.tileSize / 2;
   this.tileOffsetY = (this.tileSize / 2) / 2;
 
-  this.startCordsX = 35;
+  this.startCordsX = 60;
   this.startCordsY = 68;
 
   this.topCorner = {
@@ -51,108 +56,164 @@ const grid = function(obj){
 
 }
 
-grid.prototype.buildCanvas = function(){
-
+Valkyrie.prototype.initCanvas = function(){
   const root = document.querySelector(this.root);
 
-  if(!document.querySelector('#game-field')){
+  const canvas = document.createElement('canvas');
+  canvas.setAttribute('id', 'game-field');
+  root.appendChild(canvas);
 
-    const canvas = document.createElement('canvas');
-    canvas.setAttribute('id', 'game-field');
-    root.appendChild(canvas);
+  var thisCanvas = document.querySelector('#game-field');
+  thisCanvas.setAttribute('width', this.mapWidth + this.startCordsX);
+  thisCanvas.setAttribute('height', this.mapHeight + this.startCordsY);
+  this.canvas = thisCanvas;
 
-    var thisCanvas = document.querySelector('#game-field')
-    thisCanvas.setAttribute('width', this.mapWidth + this.startCordsX);
-    thisCanvas.setAttribute('height', this.mapHeight + this.startCordsY);
-    this.canvas = thisCanvas;
+  let context;
 
-    let context;
+  context = thisCanvas.getContext('2d');
 
-    context = thisCanvas.getContext('2d');
+  let plane = new Path2D();
 
-    let plane = new Path2D();
-
-    // plane.moveTo(35, 280);
-    // plane.lineTo(460, 68);
-    // plane.lineTo(880, 280);
-    // plane.lineTo(460, 490);
-    // plane.lineTo(35, 280);
+  // plane.moveTo(35, 280);
+  // plane.lineTo(460, 68);
+  // plane.lineTo(880, 280);
+  // plane.lineTo(460, 490);
+  // plane.lineTo(35, 280);
 
 
 
-    var startCordsX = 35;
-    var startCordsY = 68;
+  var startCordsX = this.startCordsX;
+  var startCordsY = this.startCordsY;
 
-    var mapWidth = this.tileSize * this.tilesX;
-    var mapHeight = (this.tileSize / 2) * this.tilesY;
+  var mapWidth = this.tileSize * this.tilesX;
+  var mapHeight = (this.tileSize / 2) * this.tilesY;
 
-    // console.log(mapWidth);
-    // console.log(mapHeight);
+  // console.log(mapWidth);
+  // console.log(mapHeight);
 
-    // plane.moveTo(35, 280);
-    // plane.lineTo(460, 68);
-    // plane.lineTo(880, 280);
-    // plane.lineTo(460, 490);
-    // plane.lineTo(35, 280);
-
-
-    let top = this.tileMap[0][0];
-    let right = this.tileMap[0][this.tileMap[this.tileMap.length - 1].length - 1];
-    let bottom = this.tileMap[this.tileMap.length - 1][this.tileMap[this.tileMap.length - 1].length - 1];
-    let left = this.tileMap[this.tileMap.length - 1][0];
-
-    let offsetY = this.startCordsY;
-    let offsetX = ((this.mapWidth / 2) + this.startCordsX);
-
-      // console.log(top)
-      // console.log(right)
-      // console.log(bottom)
-      // console.log(left)
-      // console.log(((mapHeight / 2) + startCordsY))
+  // plane.moveTo(35, 280);
+  // plane.lineTo(460, 68);
+  // plane.lineTo(880, 280);
+  // plane.lineTo(460, 490);
+  // plane.lineTo(35, 280);
 
 
+  let top = this.tileMap[0][0];
+  let right = this.tileMap[0][this.tileMap[this.tileMap.length - 1].length - 1];
+  let bottom = this.tileMap[this.tileMap.length - 1][this.tileMap[this.tileMap.length - 1].length - 1];
+  let left = this.tileMap[this.tileMap.length - 1][0];
 
-    // plane.moveTo(startCordsX, ((mapHeight / 2) + startCordsY));
-    // plane.lineTo(((mapWidth / 2) + startCordsX), startCordsY);
-    // plane.lineTo((mapWidth + startCordsX), ((mapHeight / 2) + startCordsY));
-    // plane.lineTo(((mapWidth / 2) + startCordsX), (mapHeight + startCordsY));
-    // plane.lineTo(startCordsX, ((mapHeight / 2) + startCordsY));
+  let offsetY = this.startCordsY;
+  let offsetX = ((this.mapWidth / 2) + this.startCordsX);
 
-    // console.log('---------------')
-    // console.log((left.b - left.t))
-    // console.log(((left.t + offsetY) + ((left.b - left.t) / 2)))
+    // console.log(top)
+    // console.log(right)
     // console.log(bottom)
-
-    // plane.moveTo(left.cl[1] + offsetX, left.cl[0] + offsetY);
-    // plane.lineTo(top.ct[1] + offsetX, top.ct[0] + offsetY);
-    // plane.lineTo(right.cr[1] + offsetX, right.cr[0] + offsetY);
-    // plane.lineTo(bottom.cb[1] + offsetX, bottom.cb[0] + offsetY);
-    // plane.lineTo(left.cl[1] + offsetX, left.cl[0] + offsetY);
+    // console.log(left)
+    // console.log(((mapHeight / 2) + startCordsY))
 
 
-    this.leftCorner['x'] = left.cl[1] + offsetX;
-    this.leftCorner['y'] = ((left.t + offsetY) + ((left.b - left.t) / 2));
-    this.topCorner['x'] = top.ct[1] + offsetX;
-    this.topCorner['y'] = top.ct[0] + offsetY;
-    this.rightCorner['x'] = right.cr[1] + offsetX;
-    this.rightCorner['y'] = right.cr[0] + offsetY;
-    this.bottomCorner['x'] = ((bottom.cl[1] + offsetX) + ((bottom.r - bottom.l) / 2));
-    this.bottomCorner['y'] =  bottom.cb[0] + offsetY;
+
+  // plane.moveTo(startCordsX, ((mapHeight / 2) + startCordsY));
+  // plane.lineTo(((mapWidth / 2) + startCordsX), startCordsY);
+  // plane.lineTo((mapWidth + startCordsX), ((mapHeight / 2) + startCordsY));
+  // plane.lineTo(((mapWidth / 2) + startCordsX), (mapHeight + startCordsY));
+  // plane.lineTo(startCordsX, ((mapHeight / 2) + startCordsY));
+
+  // console.log('---------------')
+  // console.log((left.b - left.t))
+  // console.log(((left.t + offsetY) + ((left.b - left.t) / 2)))
+  // console.log(bottom)
+
+  // plane.moveTo(left.cl[1] + offsetX, left.cl[0] + offsetY);
+  // plane.lineTo(top.ct[1] + offsetX, top.ct[0] + offsetY);
+  // plane.lineTo(right.cr[1] + offsetX, right.cr[0] + offsetY);
+  // plane.lineTo(bottom.cb[1] + offsetX, bottom.cb[0] + offsetY);
+  // plane.lineTo(left.cl[1] + offsetX, left.cl[0] + offsetY);
 
 
-    plane.moveTo(left.cl[1] + offsetX, ((left.t + offsetY) + ((left.b - left.t) / 2)));
-    plane.lineTo(top.ct[1] + offsetX, top.ct[0] + offsetY);
-    plane.lineTo(right.cr[1] + offsetX, right.cr[0] + offsetY);
-    plane.lineTo(((bottom.cl[1] + offsetX) + ((bottom.r - bottom.l) / 2)), bottom.cb[0] + offsetY);
-    plane.lineTo(left.cl[1] + offsetX, ((left.t + offsetY) + ((left.b - left.t) / 2)));
+  this.leftCorner['x'] = left.cl[1] + offsetX;
+  this.leftCorner['y'] = ((left.t + offsetY) + ((left.b - left.t) / 2));
+  this.topCorner['x'] = top.ct[1] + offsetX;
+  this.topCorner['y'] = top.ct[0] + offsetY;
+  this.rightCorner['x'] = right.cr[1] + offsetX;
+  this.rightCorner['y'] = right.cr[0] + offsetY;
+  this.bottomCorner['x'] = ((bottom.cl[1] + offsetX) + ((bottom.r - bottom.l) / 2));
+  this.bottomCorner['y'] =  bottom.cb[0] + offsetY;
 
 
-    // context.fillStyle = 'rgba(0, 0, 0, 0.2)'
-    context.fillStyle = 'rgba(255, 0, 255, 0.2)'
-    context.fill(plane);
+  plane.moveTo(left.cl[1] + offsetX, ((left.t + offsetY) + ((left.b - left.t) / 2)));
+  plane.lineTo(top.ct[1] + offsetX, top.ct[0] + offsetY);
+  plane.lineTo(right.cr[1] + offsetX, right.cr[0] + offsetY);
+  plane.lineTo(((bottom.cl[1] + offsetX) + ((bottom.r - bottom.l) / 2)), bottom.cb[0] + offsetY);
+  plane.lineTo(left.cl[1] + offsetX, ((left.t + offsetY) + ((left.b - left.t) / 2)));
 
-    this.context = context
 
+  // context.fillStyle = 'rgba(0, 0, 0, 0.2)'
+  context.fillStyle = 'rgba(255, 0, 255, 0.2)'
+  context.fill(plane);
+
+  this.context = context
+}
+
+Valkyrie.prototype.buildCanvas = function(){
+
+  if(!document.querySelector('#game-field')){
+    this.initCanvas();
+  }
+
+  if(this.tileHeld){
+
+    if(Object.keys(this.tileHeld).length > 0 && this.tileHeld.constructor === Object){
+
+      var th = this.tileSize / 2;
+      var tw = this.tileSize;
+
+      var tileOffsetX = this.tileOffsetX;
+      var tileOffsetY = this.tileOffsetY;
+
+      let leftX = ((this.mapWidth / 2) + this.startCordsX - (tw / 2));
+      let leftY = (this.startCordsY + (th / 2));
+
+      let bottomX = ((this.mapWidth / 2) + this.startCordsX);
+      let bottomY = (this.startCordsY + th);
+
+      let topX = (((this.mapWidth / 2) + this.startCordsX) + (tw / 2));
+      let topY = (this.startCordsY + (th / 2));
+
+      let rightX = ((this.mapWidth / 2) + this.startCordsX);
+      let rightY = (this.startCordsY);
+
+      let selectedTile = new Path2D();
+
+      this.context.globalAlpha = 1;
+      this.context.fillStyle = 'rgba(41, 241, 195, 0.2)'
+      this.context.strokeStyle = 'rgba(41, 241, 195, 0.2)'
+
+      var tilePos = this.tileHeld.tile.split(',')
+
+      console.log(tilePos)
+
+      let startPointX = (leftX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+      let startPointY = (leftY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]);
+      let pointAX = (bottomX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+      let pointAY = (bottomY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]);
+      let pointBX = (topX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+      let pointBY = (topY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]);
+      let pointCX = (rightX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+      let pointCY = (rightY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]);
+      let pointDX = (leftX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+      let pointDY = (leftY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]);
+
+      selectedTile.moveTo(startPointX, startPointY);
+      selectedTile.lineTo(pointAX, pointAY);
+      selectedTile.lineTo(pointBX, pointBY);
+      selectedTile.lineTo(pointCX, pointCY);
+      selectedTile.lineTo(pointDX, pointDY);
+      this.context.fill(selectedTile);
+      this.context.stroke(selectedTile);
+
+    }
 
   }
 
@@ -164,7 +225,7 @@ grid.prototype.buildCanvas = function(){
 //   ctx.fillRect(10, 10, 100, 100);
 // }
 
-grid.prototype.drawGrid = function(){
+Valkyrie.prototype.drawGrid = function(){
   let cols = 10;
   let rows = 10;
 
@@ -206,7 +267,7 @@ grid.prototype.drawGrid = function(){
 
 }
 
-grid.prototype.tileData = function(){
+Valkyrie.prototype.tileData = function(){
   // // Tile Height
   // var th = 420 / this.tilesX;
   // // Tile Width
@@ -275,7 +336,7 @@ grid.prototype.tileData = function(){
           data: {
             tile: null,
             zPos: 0,
-            attr: []
+            attr: {}
           }
         })
 
@@ -291,7 +352,11 @@ grid.prototype.tileData = function(){
 
     // Redraw map using existing data
 
-    var rect = this.canvas.getBoundingClientRect();
+    // var rect = this.canvas.getBoundingClientRect();
+
+    if(!document.querySelector('#game-field')){
+      this.initCanvas();
+    }
 
     this.context.clearRect(this.startCordsX - 1, this.startCordsY - 1, this.mapWidth + 1, this.mapHeight + 1);
 
@@ -311,8 +376,8 @@ grid.prototype.tileData = function(){
     // plane.lineTo(35, 280); //Left Point
 
 
-    var startCordsX = 35;
-    var startCordsY = 68;
+    var startCordsX = this.startCordsX;
+    var startCordsY = this.startCordsY;
 
     var mapWidth = this.tileSize * this.tilesX;
     var mapHeight = (this.tileSize / 2) * this.tilesY;;
@@ -378,9 +443,15 @@ grid.prototype.tileData = function(){
             let x = (((((mapWidth / 2) + startCordsX)) + (posX - 1) * tileOffsetX) - (tileOffsetX * (posY - 1)) - (this.tileSize / 2));
             let y = ((startCordsY + th) + (posX - 1) * tileOffsetY) + (tileOffsetY * (posY - 1)) - (offsetImg);
 
-            // console.log(item.data.tile.height)
+            let img = new Image();
+            img.src = this.tileset[item.data.tile];
 
-            ctx.drawImage(item.data.tile, x, y)
+            function drawImage(){
+              this.context.drawImage(img, x, y)
+            }
+
+            window.requestAnimationFrame(drawImage.bind(this))
+
           }
 
 
@@ -559,7 +630,6 @@ grid.prototype.tileData = function(){
             [(((mapWidth / 2) + startCordsX) + (tw / 2)), (startCordsY + (th / 2))]
           ];
 
-
           var pointObj3 = calculateCords(cordArray3, posY, posX, item.data.zPos);
 
           zPlaneThree.moveTo(pointObj3.startPointX, (pointObj3.startPointY - this.zHeight));
@@ -600,10 +670,19 @@ grid.prototype.tileData = function(){
               offsetImg = (item.data.tile.height / (this.tileSize / 2) - 1) * (this.tileSize / 2);
             }
 
-            let x = ((mapWidth / 2) + (posY - 1) * (this.tileSize / 2)) - ((this.tileSize / 2) * (posX - 1)) - ((this.tileSize / 2) / 2) + 5;
+            let x = (((mapWidth / 2) + (posY - 1) * (this.tileSize / 2)) - ((this.tileSize / 2) * (posX - 1)) - ((this.tileSize / 2) / 2) + ((startCordsX / 2) + ((startCordsX / 2) / 2)));
             let y = ((startCordsY + th) + (posX - 1) * tileOffsetY) + (tileOffsetY * (posY - 1)) - ((this.zHeight * item.data.zPos)) - offsetImg;
 
-            this.context.drawImage(item.data.tile, x, y)
+            let img = new Image();
+            img.src = this.tileset[item.data.tile];
+            // this.context.drawImage(img, x, y)
+
+            function drawImage(){
+              this.context.drawImage(img, x, y)
+            }
+
+            window.requestAnimationFrame(drawImage.bind(this))
+
           }
 
         }
@@ -618,7 +697,7 @@ grid.prototype.tileData = function(){
 
 }
 
-grid.prototype.ui = function(){
+Valkyrie.prototype.ui = function(){
 
   const tiles = this.tiles;
   const selected = this.selected;
@@ -632,7 +711,7 @@ grid.prototype.ui = function(){
     canvas.setAttribute('id', 'game-ui');
     root.appendChild(canvas);
 
-    var thisCanvas = document.querySelector('#game-ui')
+    var thisCanvas = document.querySelector('#game-ui');
     thisCanvas.setAttribute('width', this.mapWidth + this.startCordsX);
     thisCanvas.setAttribute('height', this.mapHeight + this.startCordsY);
     var context;
@@ -654,7 +733,9 @@ grid.prototype.ui = function(){
 
     // let startPointX, startPointY, pointAX, pointAY, pointBX, pointBY, pointCX, pointCY;
 
-    var title = document.querySelector('#title');
+    // var title = document.querySelector('#title');
+
+    console.log(arr)
 
     while(arr.length) {
         tilesArray.push(arr.splice(0,this.tilesY));
@@ -697,12 +778,18 @@ grid.prototype.ui = function(){
         var tw = this.tileSize; // Tile Width
         var mapWidth = this.tileSize * this.tilesX;
         var mapHeight = (this.tileSize / 2) * this.tilesY;
-        var startCordsX = 35;
-        var startCordsY = 68;
+        var startCordsX = this.startCordsX;
+        var startCordsY = this.startCordsY;
+
+        var tileHeld = this.tileHeld;
 
         for(let x = 0;x < tilesArray.length;x++){
 
           tilesArray[x].forEach((item, i) => {
+
+            // console.log('############################')
+            // console.log(`((${mousePos.x} > ${item.l} && ${mousePos.x} < ${item.r}) && (${mousePos.y} > ${item.t} && ${mousePos.y} < ${item.b}))`)
+            // console.log('############################')
 
             if((mousePos.x > item.l && mousePos.x < item.r) && (mousePos.y > item.t && mousePos.y < item.b)){
 
@@ -780,12 +867,12 @@ grid.prototype.ui = function(){
                   var outer2 = context.isPointInPath(outerArea2, offsetX, offsetY);
 
                   if(outer){
-                    title.innerHTML = 'N/A'
+                    if(this.showPostion) title.innerHTML = 'N/A';
                     currentTileMouseOver = null
                   }
 
                   if(outer2){
-                    title.innerHTML = overlap[0].tile;
+                    if(this.showPostion) title.innerHTML = overlap[0].tile;
                     currentTileMouseOver = overlap[0].name;
 
                     if(overlap[0].name === 0 && item.name === 0){
@@ -869,12 +956,12 @@ grid.prototype.ui = function(){
                   var outer2 = context.isPointInPath(outerArea2, offsetX, offsetY);
 
                   if(outer){
-                    title.innerHTML = 'N/A'
+                    if(this.showPostion) title.innerHTML = 'N/A';
                     currentTileMouseOver = null
                   }
 
                   if(outer2){
-                    title.innerHTML = overlap[0].tile;
+                    if(this.showPostion) title.innerHTML = overlap[0].tile;
                     currentTileMouseOver = overlap[0].name;
 
                     if(overlap[0].name === 0 && item.name === 0){
@@ -963,13 +1050,13 @@ grid.prototype.ui = function(){
                   var outer2 = context.isPointInPath(outerArea2, offsetX, offsetY);
 
                   if(outer){
-                    title.innerHTML = 'N/A'
+                    if(this.showPostion) title.innerHTML = 'N/A';
                     currentTileMouseOver = null
                   }
 
 
                   if(outer2){
-                    title.innerHTML = overlap[0].tile;
+                    if(this.showPostion) title.innerHTML = overlap[0].tile;
                     currentTileMouseOver = overlap[0].name;
                   }
 
@@ -1046,12 +1133,12 @@ grid.prototype.ui = function(){
                   var outer2 = context.isPointInPath(outerArea2, offsetX, offsetY);
 
                   if(outer){
-                    title.innerHTML = overlap[0].tile;
+                    if(this.showPostion) title.innerHTML = overlap[0].tile;
                     currentTileMouseOver = overlap[0].name;
                   }
 
                   if(outer2){
-                    title.innerHTML = 'N/A'
+                    if(this.showPostion) title.innerHTML = 'N/A';
                     currentTileMouseOver = null
                   }
 
@@ -1142,8 +1229,8 @@ grid.prototype.ui = function(){
                   if(inside1 || inside2){
 
                     if(inside1){
+                      if(this.showPostion) title.innerHTML = overlap[0].tile;
 
-                      title.innerHTML = overlap[0].tile;
                       currentTileMouseOver = overlap[0].name;
 
                       if(overlap[0].name === 0){
@@ -1154,7 +1241,7 @@ grid.prototype.ui = function(){
 
                     if(inside2){
 
-                      title.innerHTML = overlap[0].tile;
+                      if(this.showPostion) title.innerHTML = overlap[0].tile;
                       currentTileMouseOver = overlap[0].name;
 
                       if(overlap[0].name === 0){
@@ -1166,7 +1253,7 @@ grid.prototype.ui = function(){
                   }else{
                     var rect = this.canvas.getBoundingClientRect();
                     context.clearRect(this.startCordsX - 1, this.startCordsY - 1, this.mapWidth + 1, this.mapHeight + 1);
-                    title.innerHTML = overlap[1].tile;
+                    // title.innerHTML = overlap[1].tile;
                     currentTileMouseOver = overlap[1].name;
                   }
 
@@ -1209,6 +1296,8 @@ grid.prototype.ui = function(){
 
               if(currentTileMouseOver && item.name === currentTileMouseOver){
                 // Display hover marker selector
+
+                // console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ')
 
                 var rect = this.canvas.getBoundingClientRect();
 
@@ -1310,7 +1399,41 @@ grid.prototype.ui = function(){
 
                 this.hovered = item
 
-                // eval(this.onSelected(item))
+                // if(tileHeld){
+                //
+                //   if(Object.keys(tileHeld).length > 0 && tileHeld.constructor === Object){
+                //
+                //     let selectedTile = new Path2D();
+                //
+                //     context.globalAlpha = 1;
+                //     context.fillStyle = 'rgba(41, 241, 195, 0.2)'
+                //     context.strokeStyle = 'rgba(41, 241, 195, 0.2)'
+                //
+                //     var tilePos = tileHeld.tile.split(',')
+                //
+                //     let startPointX = (leftX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     let startPointY = (leftY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos ));
+                //     let pointAX = (bottomX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     let pointAY = (bottomY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos));
+                //     let pointBX = (topX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     let pointBY = (topY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos));
+                //     let pointCX = (rightX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     let pointCY = (rightY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos));
+                //     let pointDX = (leftX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     let pointDY = (leftY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos));
+                //
+                //
+                //     selectedTile.moveTo(startPointX, startPointY);
+                //     selectedTile.lineTo(pointAX, pointAY);
+                //     selectedTile.lineTo(pointBX, pointBY);
+                //     selectedTile.lineTo(pointCX, pointCY);
+                //     selectedTile.lineTo(pointDX, pointDY);
+                //     context.fill(selectedTile);
+                //     context.stroke(selectedTile);
+                //
+                //   }
+                //
+                // }
 
               }else if(tileZero){
 
@@ -1324,13 +1447,6 @@ grid.prototype.ui = function(){
                 context.fillStyle = 'rgba(255, 0, 0, 0.2)'
                 context.strokeStyle = 'red'
 
-                // hoverTile.moveTo(400, 100);
-                // hoverTile.lineTo(460, 130);
-                // hoverTile.lineTo(520, 100);
-                // hoverTile.lineTo(460, 70);
-                // hoverTile.lineTo(400, 100);
-
-
                 let cordArray = [
                   [((mapWidth / 2) + startCordsX - (tw / 2)), (startCordsY + (th / 2))],
                   [((mapWidth / 2) + startCordsX), (startCordsY + th)],
@@ -1339,25 +1455,62 @@ grid.prototype.ui = function(){
                   [((mapWidth / 2) + startCordsX - (tw / 2)), (startCordsY + (th / 2))],
                 ]
 
-                // console.log(cordArray)
-
-                // hoverTile.moveTo(400, 100);
-                // hoverTile.lineTo(460, 130);
-                // hoverTile.lineTo(520, 100);
-                // hoverTile.lineTo(460, 70);
-                // hoverTile.lineTo(400, 100);
-
                 hoverTile.moveTo(((mapWidth / 2) + startCordsX - (tw / 2)), (startCordsY + (th / 2)));
                 hoverTile.lineTo(((mapWidth / 2) + startCordsX), (startCordsY + th));
                 hoverTile.lineTo((((mapWidth / 2) + startCordsX) + (tw / 2)), (startCordsY + (th / 2)));
                 hoverTile.lineTo(((mapWidth / 2) + startCordsX), (startCordsY));
                 hoverTile.lineTo(((mapWidth / 2) + startCordsX - (tw / 2)), (startCordsY + (th / 2)));
 
-
                 context.fill(hoverTile);
                 context.stroke(hoverTile);
 
                 this.hovered = item
+
+
+
+                // if(tileHeld){
+                //
+                //   if(Object.keys(tileHeld).length > 0 && tileHeld.constructor === Object){
+                //
+                //     let selectedTile = new Path2D();
+                //
+                //     context.globalAlpha = 1;
+                //     context.fillStyle = 'rgba(41, 241, 195, 0.2)'
+                //     context.strokeStyle = 'rgba(41, 241, 195, 0.2)'
+                //
+                //     var tilePos = tileHeld.tile.split(',')
+                //
+                //     // let startPointX = (leftX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     // let startPointY = (leftY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos ));
+                //     // let pointAX = (bottomX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     // let pointAY = (bottomY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos));
+                //     // let pointBX = (topX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     // let pointBY = (topY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos));
+                //     // let pointCX = (rightX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     // let pointCY = (rightY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos));
+                //     // let pointDX = (leftX + ((tilePos[0]) * tileOffsetX)) - (tileOffsetX * tilePos[1]);
+                //     // let pointDY = (leftY + ((tilePos[0]) * tileOffsetY)) + (tileOffsetY * tilePos[1]) - (this.zHeight * (item.data.zPos));
+                //
+                //
+                //     // selectedTile.moveTo(startPointX, startPointY);
+                //     // selectedTile.lineTo(pointAX, pointAY);
+                //     // selectedTile.lineTo(pointBX, pointBY);
+                //     // selectedTile.lineTo(pointCX, pointCY);
+                //     // selectedTile.lineTo(pointDX, pointDY);
+                //
+                //     selectedTile.moveTo(((mapWidth / 2) + startCordsX - (tw / 2)), (startCordsY + (th / 2)));
+                //     selectedTile.lineTo(((mapWidth / 2) + startCordsX), (startCordsY + th));
+                //     selectedTile.lineTo((((mapWidth / 2) + startCordsX) + (tw / 2)), (startCordsY + (th / 2)));
+                //     selectedTile.lineTo(((mapWidth / 2) + startCordsX), (startCordsY));
+                //     selectedTile.lineTo(((mapWidth / 2) + startCordsX - (tw / 2)), (startCordsY + (th / 2)));
+                //
+                //     context.fill(selectedTile);
+                //     context.stroke(selectedTile);
+                //
+                //   }
+                //
+                // }
+
 
               }
 
@@ -1373,6 +1526,17 @@ grid.prototype.ui = function(){
       eval(e, this.clickLeft(e, this.hovered))
     }, false);
 
+    thisCanvas.addEventListener("mousemove", (e) => {
+
+      // console.log('##########################################')
+      // console.log(this.mouseMove)
+      // console.log(e)
+      // console.log(this.hovered)
+      // console.log('##########################################')
+
+      eval(e, this.mouseMove(e, this.hovered))
+    }, false);
+
     thisCanvas.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       eval(e, this.clickRight(e, this.hovered))
@@ -1383,7 +1547,7 @@ grid.prototype.ui = function(){
 }
 
 
-grid.prototype.getMousePos = function(canvas, evt) {
+Valkyrie.prototype.getMousePos = function(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
 
     // console.log((evt.clientX - this.startCordsX))
@@ -1400,7 +1564,7 @@ grid.prototype.getMousePos = function(canvas, evt) {
     };
 }
 
-grid.prototype.editTile = function(tile, pos, e){
+Valkyrie.prototype.editTile = function(tile, pos, e){
 
   let ctx = this.context;
   var posX = parseInt(pos.tile.split(',')[1]);
@@ -1416,17 +1580,18 @@ grid.prototype.editTile = function(tile, pos, e){
     this.tileMap[posX][posY].data['tile'] = null;
     this.draw();
   }else{
-    let img = new Image();
-    img.src = tile;
-    img.onload = () => {
-      this.tileMap[posX][posY].data['tile'] = img;
-      this.draw();
-    }
+
+    if(this.tileHeld) this.tileHeld = null;
+
+    this.tileMap[posX][posY].data['tile'] = tile;
+
+    this.draw();
+
   }
 
 }
 
-grid.prototype.tileLevel = function(type, pos){
+Valkyrie.prototype.tileLevel = function(type, pos){
 
   let ctx = this.context;
   var posX = parseInt(pos.tile.split(',')[1]);
@@ -1443,6 +1608,7 @@ grid.prototype.tileLevel = function(type, pos){
 
   if(type === 'increase'){
     // console.log(pos.data.zPos)
+
     zLevel = pos.data.zPos+1;
     // console.log(zLevel)
   }else{
@@ -1453,11 +1619,18 @@ grid.prototype.tileLevel = function(type, pos){
 
   this.tileMap[posX][posY].data['zPos'] = zLevel;
 
+  if(this.tileHeld) this.tileHeld = null;
+
   this.draw();
 
 }
 
-grid.prototype.clearAll = function(){
+Valkyrie.prototype.holdTile = function(type, pos){
+  this.tileHeld = type;
+  this.draw();
+}
+
+Valkyrie.prototype.clearAll = function(){
   let ctx = this.context;
 
   for(let x = 0;x < this.tileMap.length;x++){
@@ -1479,11 +1652,13 @@ grid.prototype.clearAll = function(){
 
   }
 
+  if(this.tileHeld) this.tileHeld = null;
+
   this.draw();
 
 }
 
-grid.prototype.levelZero = function(){
+Valkyrie.prototype.levelZero = function(){
   let ctx = this.context;
 
   var tile;
@@ -1508,11 +1683,12 @@ grid.prototype.levelZero = function(){
 
   }
 
+  if(this.tileHeld) this.tileHeld = null;
+
   this.draw();
 
 }
 
-grid.prototype.onClickLeft = function(func){
 Valkyrie.prototype.setTileAttr = function(name, val){
 
   let posX = this.tileHeld.tile.split(',')[0];
@@ -1641,22 +1817,24 @@ Valkyrie.prototype.updateMap = function(settings, data){
 
 }
 
+Valkyrie.prototype.onClickLeft = function(func){
   this.clickLeft = func;
 }
 
-grid.prototype.onClickRight = function(func){
+Valkyrie.prototype.onClickRight = function(func){
   this.clickRight = func;
 }
 
+Valkyrie.prototype.onMouseMove = function(func){
+  this.mouseMove = func;
+}
 
-
-grid.prototype.draw = function(){
+Valkyrie.prototype.draw = function(){
   this.tileData();
   window.requestAnimationFrame(this.buildCanvas.bind(this));
-  // this.drawGrid();
   this.ui();
 }
 
 
 
-export default grid;
+export default Valkyrie;
